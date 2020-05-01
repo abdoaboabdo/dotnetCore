@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Vega.Models;
+using Vega.Core.Models;
+using Vega.Core;
 
 namespace Vega.Persistence
 {

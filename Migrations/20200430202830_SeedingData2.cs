@@ -2,7 +2,7 @@
 
 namespace Vega.Migrations
 {
-    public partial class SeedingData : Migration
+    public partial class SeedingData2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
