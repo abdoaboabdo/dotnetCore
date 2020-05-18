@@ -10,8 +10,8 @@ using Vega.Persistence;
 namespace Vega.Migrations
 {
     [DbContext(typeof(VegaDbContext))]
-    [Migration("20200430202830_SeedingData2")]
-    partial class SeedingData2
+    [Migration("20200509021933_AddVehicle")]
+    partial class AddVehicle
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

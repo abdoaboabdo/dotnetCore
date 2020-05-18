@@ -23,13 +23,13 @@ namespace vega.Mapping
                 .ForMember(vr=>vr.Features,opt=>opt.MapFrom(v=>v.VehicleFeatures.Select(vf=> new KeyValuePairResource{ Id=vf.Feature.Id, Name=vf.Feature.Name})));
 
 
-
+            CreateMap<VehicleQueryResource, VehicleQuery>();
             CreateMap<SaveVehicleResource, Vehicle>()
-                .ForMember(v=>v.Id,opt=> opt.Ignore())
-                .ForMember(v=>v.ContactName,opt => opt.MapFrom(vr => vr.Contact.Name))
-                .ForMember(v=>v.ContactEmail,opt => opt.MapFrom(vr => vr.Contact.Email))
-                .ForMember(v=>v.ContactPhone,opt => opt.MapFrom(vr => vr.Contact.Phone))
-                .ForMember(v=>v.VehicleFeatures,opt => opt.Ignore())
+                .ForMember(v => v.Id,opt => opt.Ignore())
+                .ForMember(v => v.ContactName,opt  => opt.MapFrom(vr => vr.Contact.Name))
+                .ForMember(v => v.ContactEmail,opt  => opt.MapFrom(vr => vr.Contact.Email))
+                .ForMember(v => v.ContactPhone,opt  => opt.MapFrom(vr => vr.Contact.Phone))
+                .ForMember(v => v.VehicleFeatures,opt  => opt.Ignore())
                 .AfterMap((vr,v) => {
                     // var removeFeatures=new List<VehicleFeature>();
                     // foreach (var f in v.VehicleFeatures)
@@ -39,7 +39,9 @@ namespace vega.Mapping
                     // }
                     var removeFeatures = v.VehicleFeatures.Where(f => !vr.Features.Contains(f.FeatureId)).ToList();
                     foreach (var f in removeFeatures)
+                    {
                         v.VehicleFeatures.Remove(f);
+                    }
 
                     // foreach (var id in vr.Features)
                     // {
@@ -49,7 +51,7 @@ namespace vega.Mapping
                     var AddedFeatures = vr.Features.Where(id => !v.VehicleFeatures.Any(f=>f.FeatureId == id)).Select(id=>new VehicleFeature{FeatureId=id}).ToList();
                     foreach (var f in AddedFeatures)
                     {
-                        f.VehicleId=v.Id;
+                        // f.VehicleId=v.Id;
                         v.VehicleFeatures.Add(f);
                     }
                         

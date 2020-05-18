@@ -19,14 +19,6 @@ namespace Vega.Persistence
         {
             modelBuilder.Entity<VehicleFeature>()
                 .HasKey(vf=> new { vf.VehicleId,vf.FeatureId });
-            modelBuilder.Entity<VehicleFeature>()
-                .HasOne(bc => bc.Feature)
-                .WithMany(b => b.VehicleFeatures)
-                .HasForeignKey(bc => bc.FeatureId);  
-            modelBuilder.Entity<VehicleFeature>()
-                .HasOne(bc => bc.Vehicle)
-                .WithMany(c => c.VehicleFeatures)
-                .HasForeignKey(bc => bc.VehicleId);
         }
         
     }
