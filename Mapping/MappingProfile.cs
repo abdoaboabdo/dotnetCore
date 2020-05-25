@@ -10,6 +10,7 @@ namespace vega.Mapping
     {
         public MappingProfile()
         {
+            CreateMap(typeof(QueryResult<>),typeof(QueryResultResource<>));
             CreateMap<Make, MakeResource>();
             CreateMap<Make, KeyValuePairResource>();
             CreateMap<Model, KeyValuePairResource>();
@@ -48,7 +49,7 @@ namespace vega.Mapping
                     //     if(!v.VehicleFeatures.Any(f=>f.FeatureId == id))
                     //         v.VehicleFeatures.Add(new VehicleFeature{FeatureId=id});
                     // }
-                    var AddedFeatures = vr.Features.Where(id => !v.VehicleFeatures.Any(f=>f.FeatureId == id)).Select(id=>new VehicleFeature{FeatureId=id}).ToList();
+                    var AddedFeatures = vr.Features.Where(id => !v.VehicleFeatures.Any(f=>f.FeatureId == id) ).Select(id=>new VehicleFeature{FeatureId=id}).ToList();
                     foreach (var f in AddedFeatures)
                     {
                         // f.VehicleId=v.Id;

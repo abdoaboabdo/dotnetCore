@@ -5,8 +5,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
- 
 import { ToastrModule, ToastContainerModule } from 'ngx-toastr';
+import { DataTablesModule } from 'angular-datatables';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -18,6 +18,7 @@ import { VehicleService } from './services/vehicle.service';
 import { AppErrorHandler } from './app.error-handler';
 import { VehicleListComponent } from './components/vehicle-list/vehicle-list.component';
 import { VehicleRouteComponent } from './components/vehicle-route/vehicle-route.component';
+import { PaginationComponent } from './components/shared/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { VehicleRouteComponent } from './components/vehicle-route/vehicle-route.
     FetchDataComponent,
     VehicleFormComponent,
     VehicleListComponent,
-    VehicleRouteComponent
+    VehicleRouteComponent,
+    PaginationComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -54,7 +56,8 @@ import { VehicleRouteComponent } from './components/vehicle-route/vehicle-route.
       preventDuplicates: true,
       closeButton:true,
      }), // ToastrModule added
-    ToastContainerModule
+    ToastContainerModule,
+    DataTablesModule
   ],
   providers: [
     {provide : ErrorHandler, useClass : AppErrorHandler},

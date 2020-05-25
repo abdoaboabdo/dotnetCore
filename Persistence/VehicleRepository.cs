@@ -30,7 +30,7 @@ namespace Vega.Persistence
                     .ThenInclude(vf => vf.Feature)
                 .Include(v => v.Model)
                     .ThenInclude(m => m.Make)
-                .SingleOrDefaultAsync(v => v.Id == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
         }
 
         public void Add(Vehicle vehicle)
@@ -43,8 +43,9 @@ namespace Vega.Persistence
             context.Remove(vehicle);
         }
 
-        public async Task<IEnumerable<Vehicle>> GetVehicles(VehicleQuery queryObj)
+        public async Task<QueryResult<Vehicle>> GetVehicles(VehicleQuery queryObj)
         {
+            var result=new QueryResult<Vehicle>();
             var query =  context.Vehicles
                 .Include(v => v.Model)
                     .ThenInclude(m => m.Make)
@@ -69,13 +70,15 @@ namespace Vega.Persistence
             };
             
             query=query.ApplOrdering(queryObj,columnsMap);
+            result.TotalItems = await query.CountAsync();    
 
             query=query.ApplyPaging(queryObj);
             // if (queryObj.SortBy == "make")
             // {
             //     query = (queryObj.IsSortAscending) ? query.OrderBy(v=>v.Model.Make.Name) : query.OrderByDescending(v=>v.Model.Make.Name);
             // }
-            return await query.ToListAsync();
+            result.Items = await query.ToListAsync();
+            return result;
         }
 
 

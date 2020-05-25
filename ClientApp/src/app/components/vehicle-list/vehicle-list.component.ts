@@ -9,9 +9,13 @@ import { Observable } from 'rxjs';
   styleUrls: ['./vehicle-list.component.css']
 })
 export class VehicleListComponent implements OnInit {
-  vehicles:Vehicle[];
+  private readonly PAGE_SIZE=3;
   makes:any[];
-  query:any={};
+  query:any={
+    pageSize:this.PAGE_SIZE
+  };
+  queryResult:any={};
+  totalItems=10;
   columns=[
     { title : 'Id' },
     { title : 'Make', key : 'make', isSortable : true },
@@ -30,7 +34,7 @@ export class VehicleListComponent implements OnInit {
     ];
     Observable.forkJoin(sources).subscribe(data=>{
       this.makes=data[0];
-      this.vehicles=data[1];
+      this.queryResult=data[1];
     });
     // this.vehicleService.getMakes().subscribe(makes=>{
     //   this.makes=makes;
@@ -41,18 +45,23 @@ export class VehicleListComponent implements OnInit {
   }
 
   populateVehicles(){
-    this.vehicleService.getVehicles(this.query).subscribe(vehicles=>{
-      this.vehicles = vehicles;
+    this.vehicleService.getVehicles(this.query)
+      .subscribe(result=>{
+        this.queryResult=result;
     });
   }
 
   onFilterChange(){
+    this.query.page=1;
     this.populateVehicles();
   }
 
   resetFilter(){
-    this.query={};
-    this.onFilterChange()
+    this.query={
+      page:1,
+      pageSize:this.PAGE_SIZE
+    };
+    this.populateVehicles()
   }
 
   sortBy(columnName:string){
@@ -62,6 +71,11 @@ export class VehicleListComponent implements OnInit {
       this.query.sortBy = columnName;
       this.query.IsSortAscending=true;
     }
+    this.populateVehicles();
+  }
+
+  onPageChange(page){
+    this.query.page=page;
     this.populateVehicles();
   }
 

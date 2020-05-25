@@ -9,7 +9,7 @@ using Vega.Persistence;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using Vega.Extensions;
 namespace Vega.Controllers
 {
     [Route("/api/vehicles")]
@@ -56,18 +56,17 @@ namespace Vega.Controllers
             {
                 return NotFound();
             }
-            
-            vehicle = mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource, vehicle);
-            vehicle.LastUpdate = DateTime.Now;
 
+            mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource, vehicle);
+            vehicle.LastUpdate = DateTime.Now;
+            
             context.Entry(vehicle).State = EntityState.Modified;
-            context.Vehicles.Attach(vehicle);
             await unitOfWork.CompleteAsync();
 
-            vehicle = await repository.GetVehicle(vehicle.Id);
-            var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
+            // vehicle = await repository.GetVehicle(vehicle.Id);
+            // var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
-            return Ok(result);
+            return Ok();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicle(int id)
@@ -93,10 +92,10 @@ namespace Vega.Controllers
             return Ok(vehicleResource);
         }
         [HttpGet]
-        public async Task<IEnumerable<VehicleResource>> GetVehicles(VehicleQueryResource filterResource){
+        public async Task<QueryResultResource<VehicleResource>> GetVehicles(VehicleQueryResource filterResource){
             var filter = mapper.Map<VehicleQueryResource,VehicleQuery>(filterResource);
-            var vehicles=await repository.GetVehicles(filter);
-            return mapper.Map< IEnumerable<Vehicle> , IEnumerable<VehicleResource> >(vehicles);
+            var queryResult=await repository.GetVehicles(filter);
+            return mapper.Map<QueryResult<Vehicle>,QueryResultResource<VehicleResource>>(queryResult);
         }
     }
 }

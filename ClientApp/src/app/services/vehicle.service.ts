@@ -35,7 +35,7 @@ export class VehicleService {
   }
 
   getVehicles(filter){
-    return this.http.get<Vehicle[]>(this.VehiclesEndpoient+'?'+this.toQueryString(filter));
+    return this.http.get(this.VehiclesEndpoient+'?'+this.toQueryString(filter));
   }
 
   toQueryString(obj){
