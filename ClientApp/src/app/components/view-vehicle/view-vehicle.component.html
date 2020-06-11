@@ -1,0 +1,56 @@
+<h1>Vehicle</h1>
+<div>
+
+  <!-- Nav tabs -->
+
+  <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="pills-basic-tab" data-toggle="pill" href="#pills-basic" role="tab" aria-controls="pills-basic" aria-selected="true">Vehicles</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="pills-photos-tab" data-toggle="pill" href="#pills-photos" role="tab" aria-controls="pills-photos" aria-selected="false">Photos</a>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="pills-tabContent" *ngIf="vehicle">
+    <div class="tab-pane fade show active" id="pills-basic" role="tabpanel" aria-labelledby="pills-home-tab">
+      <h2>Basics</h2>
+      <ul>
+        <li>Make: {{ vehicle.make.name }}</li>
+        <li>Model: {{ vehicle.model.name }}</li>
+        <li>Registered: {{ vehicle.isRegistered ? 'Yes' : 'No' }}
+      </ul>
+      <h2>Features</h2>
+      <ul>
+        <li *ngFor="let f of vehicle.features">{{ f.name }}</li>
+      </ul>
+      <h2>Contact</h2>
+      <ul>
+        <li>Contact Name: {{ vehicle.contact.name }}</li>
+        <li>Contact Phone: {{ vehicle.contact.phone }}</li>
+        <li>Contact Email: {{ vehicle.contact.email }}</li>
+      </ul>
+      <br/>
+      <p>
+        <a class="btn btn-primary" [routerLink]="['/vehicles/edit/', vehicle.id]">Edit</a>
+        <button class="btn btn-danger" (click)="delete()">Delete</button>
+        <a class="btn btn-default" [routerLink]="['/vehicles']">View All Vehicles</a>
+      </p>
+    </div>
+    <div class="tab-pane fade" id="pills-photos" role="tabpanel" aria-labelledby="pills-profile-tab">
+      <h2>Photos</h2>
+
+      <input type="file" (change)="onUploadPhoto()" #fileInput>
+
+      <div class="progress" *ngIf="progress && progress.percentage < 100">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" [style.width]=" progress.percentage + '%'" >
+          {{progress.percentage}}% complete 
+        </div>
+      </div>
+      <hr >
+      <img *ngFor="let photo of photos" src="/uploads/{{photo.fileName}}" width="200" height="100" class="img-thumbnail">
+    </div>
+  </div>
+</div>
+
+

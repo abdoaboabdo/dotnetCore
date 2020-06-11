@@ -10,6 +10,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Vega.Extensions;
+using System.Collections.ObjectModel;
+
 namespace Vega.Controllers
 {
     [Route("/api/vehicles")]
@@ -44,27 +46,22 @@ namespace Vega.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVechicle(int id, [FromBody] SaveVehicleResource vehicleResource)
         {
-
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
             var vehicle = await repository.GetVehicle(id);
             if (vehicle == null)
             {
                 return NotFound();
             }
-
-            mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource, vehicle);
-            vehicle.LastUpdate = DateTime.Now;
-            
+            vehicle.VehicleFeatures=new Collection<VehicleFeature>();
             context.Entry(vehicle).State = EntityState.Modified;
             await unitOfWork.CompleteAsync();
-
-            // vehicle = await repository.GetVehicle(vehicle.Id);
-            // var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
+            vehicle = mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource, vehicle);
+            vehicle.LastUpdate = DateTime.Now;
+            context.Entry(vehicle).State = EntityState.Modified;
+            await unitOfWork.CompleteAsync();
 
             return Ok();
         }

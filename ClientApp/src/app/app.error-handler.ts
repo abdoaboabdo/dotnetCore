@@ -8,6 +8,8 @@ export class AppErrorHandler implements ErrorHandler {
         @Inject(ToastrService) private toastrService:ToastrService
         ) {}
     handleError(error: any): void {
+        console.log(error);
+        
         this.ngZone.run(()=>{
             this.toastrService.error('An unExpected error happened','Error')
         });

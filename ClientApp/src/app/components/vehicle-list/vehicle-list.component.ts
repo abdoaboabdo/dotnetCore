@@ -2,6 +2,7 @@ import { VehicleService } from './../../services/vehicle.service';
 import { Component, OnInit } from '@angular/core';
 import { Vehicle, KeyValuePair } from 'src/app/models/vehicle';
 import { Observable } from 'rxjs';
+import { HttpClient , HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -10,6 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class VehicleListComponent implements OnInit {
   private readonly PAGE_SIZE=3;
+  dtOptions: DataTables.Settings = {};
   makes:any[];
   query:any={
     pageSize:this.PAGE_SIZE
@@ -24,7 +26,7 @@ export class VehicleListComponent implements OnInit {
     {  },
   ];
 
-  constructor(private vehicleService:VehicleService) { }
+  constructor(private vehicleService:VehicleService,private http:HttpClient) { }
 
   ngOnInit() {
     
@@ -36,12 +38,8 @@ export class VehicleListComponent implements OnInit {
       this.makes=data[0];
       this.queryResult=data[1];
     });
-    // this.vehicleService.getMakes().subscribe(makes=>{
-    //   this.makes=makes;
-    // });
-    // this.vehicleService.getVehicles().subscribe(vehicles=>{
-    //   this.vehicles = this.allVehicles = vehicles;
-    // });
+
+
   }
 
   populateVehicles(){

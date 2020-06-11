@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core';
 import { VehicleService } from '../../services/vehicle.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
@@ -6,6 +7,7 @@ import { Observable } from 'rxjs';
 import  'rxjs/add/observable/forkJoin';
 import { SaveVehicle, Vehicle } from 'src/app/models/vehicle';
 import * as _ from 'underscore';
+import { ProgressService } from 'src/app/services/progress.service';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -28,12 +30,16 @@ export class VehicleFormComponent implements OnInit {
       phone: '',
     }
   };
+
+  progress:any;
   // @ViewChild(ToastContainerDirective, {static: true}) toastContainer: ToastContainerDirective;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private vehicleService:VehicleService,
-    private toastrService:ToastrService
+    private toastrService:ToastrService,
+    private progressService:ProgressService,
+    private zone:NgZone
   ) { 
     route.params.subscribe(p=>{
       this.vehicle.id = +p['id']
@@ -92,6 +98,11 @@ export class VehicleFormComponent implements OnInit {
     }
   }
   submit(){
+    this.progressService.startTracking()
+      .subscribe(progress=>{
+        this.zone.run(()=>this.progress=progress)
+      },null,
+      ()=>{this.progress=null});
     if (this.vehicle.id > 0) {
       this.vehicleService.updateVehicle(this.vehicle)
         .subscribe(x=>{
@@ -99,6 +110,8 @@ export class VehicleFormComponent implements OnInit {
             closeButton:true,
             timeOut:5000,
           })
+        },error=>{
+          console.log(error)
         })
     }else{
       this.vehicle.id=0;
@@ -109,6 +122,8 @@ export class VehicleFormComponent implements OnInit {
               closeButton:true,
               timeOut:5000,
             })
+          },error=>{
+            console.log(error)
           }
         );
     }

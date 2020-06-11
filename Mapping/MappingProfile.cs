@@ -10,6 +10,7 @@ namespace vega.Mapping
     {
         public MappingProfile()
         {
+            CreateMap<Photo, PhotoResource>();
             CreateMap(typeof(QueryResult<>),typeof(QueryResultResource<>));
             CreateMap<Make, MakeResource>();
             CreateMap<Make, KeyValuePairResource>();
@@ -43,17 +44,27 @@ namespace vega.Mapping
                     {
                         v.VehicleFeatures.Remove(f);
                     }
-
+                    var currentFeature = v.VehicleFeatures.ToList();
                     // foreach (var id in vr.Features)
                     // {
                     //     if(!v.VehicleFeatures.Any(f=>f.FeatureId == id))
                     //         v.VehicleFeatures.Add(new VehicleFeature{FeatureId=id});
                     // }
-                    var AddedFeatures = vr.Features.Where(id => !v.VehicleFeatures.Any(f=>f.FeatureId == id) ).Select(id=>new VehicleFeature{FeatureId=id}).ToList();
+                    var AddedFeatures = vr.Features
+                        .Where(id => !v.VehicleFeatures.Any(f=>f.FeatureId == id) )
+                        .Select(id=>new VehicleFeature{FeatureId=id}).ToList();
                     foreach (var f in AddedFeatures)
                     {
                         // f.VehicleId=v.Id;
                         v.VehicleFeatures.Add(f);
+                    }
+
+                    foreach (var item in currentFeature)
+                    {
+                        if (v.VehicleFeatures.Contains(item))
+                        {
+                            v.VehicleFeatures.Remove(item);
+                        }
                     }
                         
                         

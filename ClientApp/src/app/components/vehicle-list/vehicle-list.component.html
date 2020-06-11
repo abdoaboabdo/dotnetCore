@@ -12,7 +12,7 @@
   </div>
  <button class="btn btn-default" (click)="resetFilter()">Reset</button>
 </div>
-<table class="table">
+<table datatable [dtOptions]="dtOptions" class="table row-border hover">
   <thead>
     <tr>
       <th *ngFor="let c of columns" (click)="sortBy(c.key)" >

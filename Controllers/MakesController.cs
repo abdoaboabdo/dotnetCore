@@ -27,5 +27,23 @@ namespace Vega.Controllers
             var makes = await context.Makes.Include(m => m.Models).ToListAsync();
             return mapper.Map<List<Make>,List<MakeResource>>(makes);
         }
+
+        [HttpPut("api/makes/{id}")]
+        public async Task<IActionResult> update(int id,[FromBody]KeyValuePairResource makeResource)
+        {
+             if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var make=await context.Makes.FindAsync(id);
+            if (make == null)
+            {
+                return NotFound();
+            }
+            make.Name=makeResource.Name;
+            context.Entry(make).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return  Ok(make);
+        }
     }
 }
