@@ -52,15 +52,8 @@ namespace Vega.Persistence
                 .Include(v => v.VehicleFeatures)
                     .ThenInclude(vf => vf.Feature)
                 .AsQueryable();
-            if (queryObj.ModelId.HasValue)
-            {
-                query = query.Where(V=> V.ModelId==queryObj.ModelId.Value);
-            }
 
-            if (queryObj.MakeId.HasValue)
-            {
-                query = query.Where(V=> V.Model.MakeId==queryObj.MakeId.Value);
-            }
+            query=query.ApplyFiltering(queryObj);
 
             var columnsMap = new Dictionary<string,Expression<Func<Vehicle, object>>>(){
                 ["make"] = v=>v.Model.Make.Name,

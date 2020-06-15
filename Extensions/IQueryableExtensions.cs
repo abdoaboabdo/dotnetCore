@@ -8,6 +8,19 @@ namespace Vega.Extensions
 {
     public static class IQueryableExtensions
     {
+        public static IQueryable<Vehicle> ApplyFiltering(this IQueryable<Vehicle> query,VehicleQuery queryObj)
+        {
+            if (queryObj.ModelId.HasValue)
+            {
+                query = query.Where(V=> V.ModelId==queryObj.ModelId.Value);
+            }
+
+            if (queryObj.MakeId.HasValue)
+            {
+                query = query.Where(V=> V.Model.MakeId==queryObj.MakeId.Value);
+            }
+            return query;
+        }
         public static IQueryable<T> ApplOrdering<T>(this IQueryable<T> query,IQueryObject queryObj,Dictionary<string,Expression<Func<T, object>>> columnsMap)
         {
             if (String.IsNullOrEmpty(queryObj.SortBy) || !columnsMap.ContainsKey(queryObj.SortBy))
