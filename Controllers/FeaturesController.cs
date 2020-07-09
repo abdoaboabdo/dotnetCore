@@ -20,7 +20,7 @@ namespace Vega.Controllers
             this.mapper = mapper;
             this.context = context;
         }
-        // [Authorize]
+        [Authorize]
         [HttpGet("/api/features")]
         public async Task<IEnumerable<KeyValuePairResource>> GetFeatures()
         {

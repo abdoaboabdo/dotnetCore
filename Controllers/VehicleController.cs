@@ -55,6 +55,7 @@ namespace Vega.Controllers
             {
                 return NotFound();
             }
+            
             vehicle.VehicleFeatures=new Collection<VehicleFeature>();
             context.Entry(vehicle).State = EntityState.Modified;
             await unitOfWork.CompleteAsync();

@@ -11,6 +11,11 @@ using Vega.Core;
 using Vega.Core.Models;
 using Vega.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Vega
 {
@@ -32,6 +37,19 @@ namespace Vega
             services.AddScoped<IMakeRepository,MakeRepository>();
             services.AddScoped<IUnitOfWork,UnitOfWork>();
             services.AddDbContext<VegaDbContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            
+            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<VegaDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddIdentityServer()
+                .AddApiAuthorization<User, VegaDbContext>();
+
+            // services.AddAuthentication()
+            //     .AddJwtBearer();
+
+            SetupJWTServices(services);
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -43,17 +61,43 @@ namespace Vega
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
             services.AddAutoMapper(typeof(Startup));
-            // 1. Add Authentication Services
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.Authority = "https://vegaabdo.auth0.com/";
-                options.Audience = "https://api.vega.com";
-            });
         }
+
+
+
+        private void SetupJWTServices(IServiceCollection services)  
+        {  
+            string key = Configuration.GetSection("JwtConfig").GetSection("secret").Value; //this should be same which is used while creating token      
+            var issuer = "https://localhost:5001";  //this should be same which is used while creating token  
+  
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)  
+                .AddJwtBearer(options =>  
+                {  
+                    options.TokenValidationParameters = new TokenValidationParameters  
+                    {  
+                        ValidateIssuer = true,  
+                        ValidateAudience = true,  
+                        ValidateIssuerSigningKey = true,  
+                        ValidIssuer = issuer,  
+                        ValidAudience = issuer,  
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))  
+                    };  
+
+                    options.Events = new JwtBearerEvents  
+                    {  
+                        OnAuthenticationFailed = context =>  
+                        {  
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))  
+                            {  
+                                context.Response.Headers.Add("Token-Expired", "true");  
+                            }  
+                            return Task.CompletedTask;  
+                        }  
+                    };  
+                });  
+        }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -79,6 +123,7 @@ namespace Vega
 
             app.UseRouting();
             app.UseAuthentication();
+
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
